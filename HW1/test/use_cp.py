@@ -24,11 +24,11 @@ def laplace(m: cp.array):
 
 
 def compute_A():
-    a = cp.zeros((262*321, 262*321), cp.int8)
-    for i in range(0, 262):
-        for j in range(0, 321):
-            x = cp.zeros((262, 321))
-            if i == 0 or j == 0 or i == 261 or j == 320:
+    a = cp.zeros((132*162, 132*162), cp.int8)
+    for i in range(0, 132):
+        for j in range(0, 162):
+            x = cp.zeros((132, 162))
+            if i == 0 or j == 0 or i == 131 or j == 161:
                 x[i, j] = 1
             else:
                 x[i, j] = -4
@@ -38,11 +38,11 @@ def compute_A():
 
 
 def poisson(s, g, A):
-    background = g[398:662,898:1221]
+    background = g[398:532,898:1062]
     l_background = laplace(background)
     l_sheep = laplace(s)
     replace = l_background.copy()
-    replace[2:260,2:319] = l_sheep
+    replace[2:130,2:160] = l_sheep
     b = cp.transpose(cp.array([replace.flatten()]))
     print(1)
     # print(A.shape, b.shape)
@@ -51,7 +51,7 @@ def poisson(s, g, A):
 
 
 # load images
-sheep = cv.imread("sheep.png")
+sheep = cv.imread("sheep.jpg")
 sheep_R = sheep[:,:,0]
 sheep_G = sheep[:,:,1]
 sheep_B = sheep[:,:,2]
