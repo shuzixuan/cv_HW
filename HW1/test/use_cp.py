@@ -1,10 +1,8 @@
 import cv2 as cv
-import numpy as np
 import time
 import cupy as cp
 
-
-def convolution(matrix: cp.array, kernel: cp.array):
+def convolution(matrix, kernel):
     m = matrix.shape[0]
     n = matrix.shape[1]
     x = kernel.shape[0]
@@ -26,16 +24,16 @@ def laplace(m: cp.array):
 
 
 def compute_A():
-    a = cp.zeros((262*321,262*321))
+    a = cp.zeros((262*321, 262*321), cp.int8)
     for i in range(0, 262):
         for j in range(0, 321):
             x = cp.zeros((262, 321))
             if i == 0 or j == 0 or i == 261 or j == 320:
-                x[i,j] = 1
+                x[i, j] = 1
             else:
-                x[i,j] = -4
-                x[i-1,j], x[i, j-1], x[i+1, j], x[i, j+1] = 1, 1, 1, 1
-            a[i+j-2,:] = x.flatten()
+                x[i, j] = -4
+                x[i-1, j], x[i, j-1], x[i+1, j], x[i, j+1] = 1, 1, 1, 1
+            a[i+j-2, :] = x.flatten()
     return a
 
 
@@ -52,8 +50,6 @@ def poisson(s, g, A):
     return res
 
 
-
-
 # load images
 sheep = cv.imread("sheep.png")
 sheep_R = sheep[:,:,0]
@@ -64,18 +60,10 @@ grass_R = grass[:,:,0]
 grass_G = grass[:,:,1]
 grass_B = grass[:,:,2]
 A = compute_A()
+
 # target for sheep is grass[400:660,900:1219]
 start = time.time()
 R = poisson(sheep_R, grass_R, A)
 print("R finished")
 end = time.time()
 print(end-start)
-# G = poisson(sheep_G, grass_G. A)
-# print("G finished")
-# B = poisson(sheep_B, grass_B, A)
-# print("B finished")
-# r_sheep = np.array([R, G, B])
-# target = grass.copy()
-# target[400:660,900:1219] = r_sheep # directly paste
-# cv.waitKey(0)
-# cv.destroyAllWindows()
